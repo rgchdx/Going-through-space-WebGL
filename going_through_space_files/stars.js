@@ -12,7 +12,11 @@ var stars = function () {
   let near = 0.1;
   let far = 100;
 
-  //declare speres array
+  let spheres = [
+    { pos: vec3(-3, 0, -5), color: vec4(0.4, 0.2, 0.1, 1.0) }, // Mars
+    { pos: vec3(0, 0, -10), color: vec4(0.0, 0.5, 1.0, 1.0) }, // Earth
+    { pos: vec3(3, 0, -20), color: vec4(1.0, 0.8, 0.2, 1.0) }  // Jupiter
+  ];
 
   window.onload = function init() {
     canvas = document.getElementById("gl-canvas");
@@ -26,7 +30,7 @@ var stars = function () {
     program = initShaders(gl, "vertex-shader", "fragment-shader");
     gl.useProgram(program);
 
-    sphereVertices = createSphere(1, 20, 20);
+    sphereVertices = createSphere(1, 40, 40);
 
     const vBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
@@ -61,14 +65,38 @@ var stars = function () {
   }
 
   function createSphere(radius, latBands, longBands) {
-    //implement this
+    let vertices = [];
+
+    for (let lat = 0; lat <= latBands; ++lat) {
+      let theta = lat * Math.PI / latBands;
+      let sinTheta = Math.sin(theta);
+      let cosTheta = Math.cos(theta);
+
+      for (let lon = 0; lon <= longBands; ++lon) {
+        let phi = lon * 2 * Math.PI / longBands;
+        let sinPhi = Math.sin(phi);
+        let cosPhi = Math.cos(phi);
+
+        let x = cosPhi * sinTheta;
+        let y = cosTheta;
+        let z = sinPhi * sinTheta;
+
+        vertices.push(vec4(radius * x, radius * y, radius * z, 1.0));
+      }
     }
 
     return vertices;
   }
 
   function keyPressed(event) {
-    //implement this
+    const speed = 0.4;
+    switch (event.key) {
+      case 'w': eye[2] -= speed; break;
+      case 's': eye[2] += speed; break;
+      case 'a': eye[0] += speed; break;
+      case 'd': eye[0] -= speed; break;
+    }
+  }
 };
 
 stars();
