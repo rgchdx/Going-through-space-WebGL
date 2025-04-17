@@ -11,8 +11,12 @@ var stars = function () {
   // Specifying the up direction
   let up = vec3(0, 1, 0);
 
+  // Setting up the projection matrix
+  // The fov is the field of view in degrees
   let fov = 60;
+  // Near is the distance to the near clipping plane
   let near = 0.1;
+  // Far is the distance to the far clipping plane
   let far = 100;
 
   let rotationAngle = 0;
@@ -46,6 +50,7 @@ var stars = function () {
     sphereVertices = sphereData.vertices;
     sphereIndices = sphereData.indices;
 
+    // Buffer for the vertices
     // Create a buffer to hold the position datapoints for the planets
     const vBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
@@ -55,8 +60,8 @@ var stars = function () {
     gl.vertexAttribPointer(aPosition, 4, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(aPosition);
 
+    // Buffer for the indices
     // Create and bind index buffer for lines
-    // I had to look this up, but this is how you create an index buffer
     const iBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, iBuffer);
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(sphereIndices), gl.STATIC_DRAW);
@@ -71,8 +76,10 @@ var stars = function () {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
     // Setting up the projection matrix
+    // Transforming the 3D coordinates to 2D. Defines how the 3D schene is projected onto the 2D viewpoint.
     let projectionMatrix = perspective(fov, canvas.width / canvas.height, near, far);
     // Sending the projection matrix to the shader
+    // The flatten will convert the matrix to a 1D array
     gl.uniformMatrix4fv(gl.getUniformLocation(program, "uProjectionMatrix"), false, flatten(projectionMatrix));
 
     if (spheres[0]){
@@ -84,9 +91,13 @@ var stars = function () {
     }
 
     for (let i = 0; i < spheres.length; ++i) {
+      // Setting up the model view matrix
+      // Defines the camera position and orientation in the scene
+      // lookAt function generates a view matrix that transforms the scene so taht the camera position is at eye,
+      // oriented to look at the object at the at point, and up so we know which is the up direction.
       let mv = lookAt(eye, at, up);
 
-      // Apply translation and rotation
+      // Bobbing effect. Uses the sin function ot go up and down with the wave.
       let floatY;
       if (i==0){
         floatY = Math.sin(rotationAngle * 0.02 + i) * 0.2;
@@ -97,9 +108,12 @@ var stars = function () {
       }
 
       // Applying the translation and rotation
+      // Adding the bobbing effect on the y-axis
       mv = mult(mv, translate(spheres[i].pos[0], spheres[i].pos[1] + floatY, spheres[i].pos[2]));
-      mv = mult(mv, rotate(rotationAngle, vec3(0, 1, 0))); // Rotate around Y-axis
+      // Adding the rotation effect with the y-axis as the axis of rotation
+      mv = mult(mv, rotate(rotationAngle, vec3(0, 1, 0)));
 
+      // Sending the model view matrix to the shader
       gl.uniformMatrix4fv(gl.getUniformLocation(program, "uModelViewMatrix"), false, flatten(mv));
       gl.uniform4fv(gl.getUniformLocation(program, "uColor"), spheres[i].color);
 
