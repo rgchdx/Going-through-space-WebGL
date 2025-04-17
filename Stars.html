@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<!-- saved from url=(0060)https://www.interactivecomputergraphics.com/Code/05/hat.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252"><script id="simplify-jobs-page-script" src="chrome-extension://pbanhockgagggenencehbnadejlgchfc/js/pageScript.bundle.js"></script></head><body data-new-gr-c-s-check-loaded="14.1231.0" data-gr-ext-installed=""><p> </p>
+<button id="Button1">Increase Z</button>
+<button id="Button2">Decrease Z</button>
+<button id="Button3">Increase R</button>
+<button id="Button4">Decrease R</button>
+
+<p> </p>
+<button id="Button5">Increase theta</button>
+<button id="Button6">Decrease theta</button>
+<button id="Button7">Increase phi</button>
+<button id="Button8">Decrease phi</button>
+<p> </p>
+<button id="Button9">Wider</button>
+<button id="Button10">Narrower</button>
+<button id="Button11">Higher</button>
+<button id="Button12">Shorter</button>
+
+
+<p> </p>
+<script id="vertex-shader" type="x-shader/x-vertex">
+#version 300 es
+
+in vec4 aPosition;
+
+//Represents a 4x4 matrix that combines the model matrix (which positions, rotates, and scales an object in the world)
+//and the view matrix (which positions the camera in the world)
+uniform mat4 uModelViewMatrix;
+//Represents a 4x4 matrix that defines the projection of the scene
+//It transforms camera (view) space coordinates into clip space, which is used for rendering.
+uniform mat4 uProjectionMatrix;
+
+void main()
+{
+  //represents the transformation of a vertex's position (aPosition) form object space to clip space in a vertex shader.
+  //Matrix transformation applied to the aPosition vector
+    gl_Position = uProjectionMatrix*uModelViewMatrix*aPosition;
+}
+</script>
+
+<script id="fragment-shader" type="x-shader/x-fragment">
+#version 300 es
+
+precision mediump float;
+
+uniform vec4 uColor;
+
+out vec4 fColor;
+
+void
+main()
+{
+    fColor = uColor;
+}
+</script>
+
+<script type="text/javascript" src="./hat_files/initShaders.js"></script>
+<script type="text/javascript" src="./hat_files/MVnew.js"></script>
+<script type="text/javascript" src="./hat_files/hat.js"></script>
+
+
+
+
+<canvas id="gl-canvas" width="512" height="512">
+Oops ... your browser doesn't support the HTML5 canvas element
+</canvas>
+
+
+
+
+
+</body><grammarly-desktop-integration data-grammarly-shadow-root="true"><template shadowrootmode="open"><style>
+      div.grammarly-desktop-integration {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+        -moz-user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select:none;
+        user-select:none;
+      }
+
+      div.grammarly-desktop-integration:before {
+        content: attr(data-content);
+      }
+    </style><div aria-label="grammarly-integration" role="group" tabindex="-1" class="grammarly-desktop-integration" data-content="{&quot;mode&quot;:&quot;full&quot;,&quot;isActive&quot;:true,&quot;isUserDisabled&quot;:false,&quot;isAlwaysAvailableAssistantEnabled&quot;:false}"></div></template></grammarly-desktop-integration></html>
